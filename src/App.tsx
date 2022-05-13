@@ -9,10 +9,6 @@ interface ITodo {
   userId : number
 }
 
-interface TodoProps {
-  todo: ITodo
-}
-
 type ApiDataType = {
   message: string
   status: string
