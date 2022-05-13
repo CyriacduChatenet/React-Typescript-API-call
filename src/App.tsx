@@ -1,24 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import axios, { AxiosResponse } from "axios"
+import { useEffect, useState } from "react";
+
+interface ITodo {
+  id: number
+  title: string
+  completed : boolean
+  userId : number
+}
+
+interface TodoProps {
+  todo: ITodo
+}
+
+type ApiDataType = {
+  message: string
+  status: string
+  todos: ITodo[]
+  todo?: ITodo
+}
 
 function App() {
+
+  const [allTodos, setAllTodos] = useState<ITodo[] | any>([])
+  const [displayData, setDisplayData] = useState(false)
+
+  const getTodos = async (): Promise<AxiosResponse<ApiDataType>> => {
+    try {
+      const todos: AxiosResponse<ApiDataType> = await axios.get('https://jsonplaceholder.typicode.com/todos')
+      setAllTodos(todos.data)
+      return todos
+    } catch (error) {
+      throw new Error()
+    }
+  }
+
+  useEffect(() => {
+    console.log(getTodos());
+    setTimeout(() => {
+      setDisplayData(true)
+      console.log(allTodos)
+    },100)
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Todos</h1>
+      <p>todos:</p>
+      <div>{displayData ?  allTodos.map((todo : ITodo) => <p key={todo.id}>{todo.title}</p>) : <p>Loading ...</p>}</div>
     </div>
   );
 }
